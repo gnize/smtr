@@ -4,15 +4,31 @@
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     poetry2nix = {
       url = "github:nix-community/poetry2nix?ref=master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    frag.url = "path:/home/matt/src/frag";
+
+    frag = {
+      url = "path:/home/matt/src/gnize/frag";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    gnize = {
+      url = "path:/home/matt/src/gnize/gnize";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    frag-py = {
+      url = "path:/home/matt/src/gnize/frag-py";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    gnize-py = {
+      url = "path:/home/matt/src/gnize/gnize-py";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, poetry2nix, pre-commit-hooks, frag }:
+  outputs = { self, nixpkgs, flake-utils, poetry2nix, pre-commit-hooks, frag, gnize }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -35,6 +51,7 @@
         pre-commit-shell-hook = pre-commit-checks.shellHook;
 
         frag-pkg = frag.packages.${system}.default;
+        gnize-pkg = gnize.packages.${system}.default;
 
       in
       {
@@ -54,6 +71,7 @@
             pkgs.poetry
             pythonEnv
             frag-pkg
+            gnize-pkg
           ];
         };
       });
